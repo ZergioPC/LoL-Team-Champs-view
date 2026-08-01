@@ -10,9 +10,9 @@ import { Modal } from './components/Modal';
 
 import UseTeamsLogic from './hooks/UseTeamsLogic';
 import UseGetChamps from './hooks/UseGetChamps';
+import UseApiEndpoints from './hooks/UseApiEndpoints';
 
 import findChamps from './utils/findChamps';
-import getApiEndpoints from './utils/getApiEndpoints';
 import checkNoRepeatData from './utils/checkNoRepeatData';
 
 // DOC API https://developer.riotgames.com/docs/lol#data-dragon_champions
@@ -23,8 +23,8 @@ const TeamTypes = {
 }
 
 function App() {
-  const URLs = getApiEndpoints()
-  const champsInitList = UseGetChamps(URLs.champList);
+  const endpoints = UseApiEndpoints()
+  const champsInitList = UseGetChamps(endpoints?.champList);
 
   // MARK: Load-Error 
   const [modal, setModal] = React.useState({
@@ -91,7 +91,7 @@ function App() {
   })
 
   React.useEffect(()=>{
-    if (!search.champId) return;
+    if (!search.champId || !endpoints) return;
 
     switch(search.team){
       case TeamTypes.blue :   
@@ -130,14 +130,24 @@ function App() {
         break;
     }
     
-    fetch(URLs.champData + search.champId + ".json")
-    .then(res => res.json())
+    fetch(endpoints.champData + search.champId + ".json")
+    .then(res => {
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return res.json();
+    })
     .then(data => {
       addTeamChamp(search.team, data.data[search.champId]);
       setChampSearchDefault();
-    }).catch(e => console.log("ERROR CHE: ", e));
+    }).catch(e => {
+      console.log("ERROR CHE: ", e);
+      setStopLoading();
+      setChampSearchDefault();
+      setShowModal(
+        "No se pudo cargar el campeón. Inténtalo de nuevo."
+      );
+    });
     
-  },[search.champId, search.team]);
+  },[search.champId, search.team, endpoints]);
 
   // MARK: Teams
   const {
@@ -162,8 +172,14 @@ function App() {
     }
   } 
 
-  const blueChampList = findChamps(search.queryBlue, champsInitList);
-  const redChampList  = findChamps(search.queryRed, champsInitList);
+  const blueChampList = React.useMemo(
+    () => findChamps(search.queryBlue, champsInitList),
+    [search.queryBlue, champsInitList]
+  );
+  const redChampList = React.useMemo(
+    () => findChamps(search.queryRed, champsInitList),
+    [search.queryRed, champsInitList]
+  );
 
   return (
     <>
@@ -201,6 +217,7 @@ function App() {
                 key={index} 
                 id={champ.id} 
                 champ={champ}
+                champImg={endpoints?.champImg}
                 OnRemove={(id)=> rmBlueChamp(id)}
               />
           )}
@@ -228,6 +245,7 @@ function App() {
                 key={index} 
                 id={champ.id} 
                 champ={champ}
+                champImg={endpoints?.champImg}
                 OnRemove={(id)=> rmRedChamp(id)}
               />
           )}

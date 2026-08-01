@@ -1,12 +1,8 @@
 import React from "react";
-import getApiEndpoints from "../../utils/getApiEndpoints";
 import "./LolChampItem.css"
 
-const LolChampItem = ({ champ, OnRemove })=>{
-  //console.log(champ);
-
+const LolChampItem = ({ champ, champImg, OnRemove })=>{
   const keys = ["Q", "W", "E", "R"];
-  const { champImg:URL } =  getApiEndpoints();
   
   return(
     <article className="LolChampItem">
@@ -17,7 +13,7 @@ const LolChampItem = ({ champ, OnRemove })=>{
       <h3>{champ.name}</h3>
 
       <figure>
-        <img src={URL + champ.image.full} alt={"Foto de " + champ.id} />
+        <img src={champImg + champ.image.full} alt={"Foto de " + champ.id} />
       </figure>
 
       <ol>
