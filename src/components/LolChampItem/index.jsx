@@ -1,9 +1,8 @@
-import React from "react";
 import "./LolChampItem.css"
 
+const SPELL_KEYS = ["Q", "W", "E", "R"];
+
 const LolChampItem = ({ champ, champImg, OnRemove })=>{
-  const keys = ["Q", "W", "E", "R"];
-  
   return(
     <article className="LolChampItem">
       <button 
@@ -21,7 +20,7 @@ const LolChampItem = ({ champ, champImg, OnRemove })=>{
           <li 
             key={spell.id}
           > 
-            <span>{keys[index]}</span>
+            <span>{SPELL_KEYS[index]}</span>
             <p>{spell.name}</p>
           </li>
         ))}

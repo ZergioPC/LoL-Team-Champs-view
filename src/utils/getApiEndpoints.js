@@ -11,8 +11,8 @@ function getApiEndpoints(version = FALLBACK_VERSION) {
   return {
     champData: URL + CHAMP_DATA,
     champList: URL + CHAMPS_LIST,
-    champImg: URL + CHAMP_IMG
-  }
+    champImg: URL + CHAMP_IMG,
+  };
 }
 
 export default getApiEndpoints;

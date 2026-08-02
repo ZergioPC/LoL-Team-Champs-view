@@ -16,7 +16,7 @@ async function getLatestDragonVersion() {
   return cachedVersion;
 }
 
-function UseApiEndpoints() {
+function useApiEndpoints() {
   const [endpoints, setEndpoints] = React.useState(null);
 
   React.useEffect(() => {
@@ -28,7 +28,10 @@ function UseApiEndpoints() {
         setEndpoints(getApiEndpoints(version));
       })
       .catch((e) => {
-        console.warn("No se pudo obtener la ultima version de DDragon, usando version de respaldo:", e);
+        console.warn(
+          "No se pudo obtener la ultima version de DDragon, usando version de respaldo:",
+          e
+        );
         if (!active) return;
         setEndpoints(getApiEndpoints());
       });
@@ -41,4 +44,4 @@ function UseApiEndpoints() {
   return endpoints;
 }
 
-export default UseApiEndpoints;
+export default useApiEndpoints;

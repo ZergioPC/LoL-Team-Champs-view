@@ -1,4 +1,3 @@
-import React from "react";
 import './LolChampItemLoad.css';
 
 const LolChampItemLoad = ()=>{

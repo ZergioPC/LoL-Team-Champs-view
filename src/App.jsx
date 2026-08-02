@@ -1,176 +1,51 @@
-import React from 'react';
-import './App.css';
+import React from "react";
+import "./App.css";
 
-import { LolSearch } from './components/LolSearch';
-import { LolChampList } from './components/LolChampList';
-import { LolChampItem } from './components/LolChampItem';
-import { LolChampItemLoad } from './components/LolChampItemLoad';
+import { Modal } from "./components/Modal";
+import { TeamPanel } from "./components/TeamPanel";
 
-import { Modal } from './components/Modal';
+import useApiEndpoints from "./hooks/useApiEndpoints";
+import useGetChamps from "./hooks/useGetChamps";
+import useTeamsLogic from "./hooks/useTeamsLogic";
+import useModal from "./hooks/useModal";
+import useLoading from "./hooks/useLoading";
+import useSearch from "./hooks/useSearch";
+import useAddChamp from "./hooks/useAddChamp";
 
-import UseTeamsLogic from './hooks/UseTeamsLogic';
-import UseGetChamps from './hooks/UseGetChamps';
-import UseApiEndpoints from './hooks/UseApiEndpoints';
-
-import findChamps from './utils/findChamps';
-import checkNoRepeatData from './utils/checkNoRepeatData';
-
-// DOC API https://developer.riotgames.com/docs/lol#data-dragon_champions
-
-const TeamTypes = {
-  blue: "BLUE",
-  red: "RED"
-}
+import findChamps from "./utils/findChamps";
+import { TEAM_TYPES } from "./constants";
 
 function App() {
-  const endpoints = UseApiEndpoints()
-  const champsInitList = UseGetChamps(endpoints?.champList);
-
-  // MARK: Load-Error 
-  const [modal, setModal] = React.useState({
-    visible: false,
-    message: ""
-  });
-
-  const setShowModal = (txt)=>{
-    setModal({
-      ...modal,
-      visible: true,
-      message: txt
-    });
-  }
-
-  const [loading, setLoading] = React.useState({
-    blue:false, red:false
-  });
-
-  const setBlueLoading = ()=> setLoading({
-    ...loading,
-    blue:true
-  });
-
-  const setRedLoading = ()=> setLoading({
-    ...loading,
-    red:true
-  });
-
-  const setStopLoading = ()=> setLoading({
-    blue:false, 
-    red:false
-  });
-  
-  // MARK: Search
-  const [search, setSearch] = React.useState(
-    { queryRed: "", queryBlue: "", champId: null, team: null }
-  );
-  
-  const setQueryBlueSearch = (value)=> setSearch({
-    ...search,
-    queryBlue: value,
-  });
-
-  const setQueryRedSearch = (value)=> setSearch({
-    ...search,
-    queryRed: value,
-  });
-
-  const setChampTeamSearch = (id, team)=> setSearch({
-    ...search,
-    queryRed: "",
-    queryBlue: "",
-    champId: id,
-    team: team
-  });
-
-  const setChampSearchDefault = ()=> setSearch({
-    ...search,
-    queryRed: "", 
-    queryBlue: "", 
-    champId: null, 
-    team: null
-  })
-
-  React.useEffect(()=>{
-    if (!search.champId || !endpoints) return;
-
-    switch(search.team){
-      case TeamTypes.blue :   
-        if (blueTeam.length >= 5) {
-          setShowModal(
-            "Solo 5 campeones por equipo"
-          );
-          return;
-        }     
-
-        if (checkNoRepeatData(search.champId, blueTeam)){
-          setShowModal(
-            "No se puede repetir campeón en un mismo equipo"
-          );
-          setChampSearchDefault();
-          return;
-        }
-        setBlueLoading();
-        break;
-      case TeamTypes.red :
-        if (redTeam.length >= 5) {
-          setShowModal(
-            "Solo 5 campeones por equipo"
-          );
-          return;
-        }     
-
-        if (checkNoRepeatData(search.champId, redTeam)){
-          setShowModal(
-            "No se puede repetir campeón en un mismo equipo"
-          );
-          setChampSearchDefault();
-          return;
-        }
-        setRedLoading();
-        break;
-    }
-    
-    fetch(endpoints.champData + search.champId + ".json")
-    .then(res => {
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      return res.json();
-    })
-    .then(data => {
-      addTeamChamp(search.team, data.data[search.champId]);
-      setChampSearchDefault();
-    }).catch(e => {
-      console.log("ERROR CHE: ", e);
-      setStopLoading();
-      setChampSearchDefault();
-      setShowModal(
-        "No se pudo cargar el campeón. Inténtalo de nuevo."
-      );
-    });
-    
-  },[search.champId, search.team, endpoints]);
-
-  // MARK: Teams
+  const endpoints = useApiEndpoints();
   const {
-    blueTeam, 
-    redTeam, 
-    setBlueChamp, 
+    champs: champsInitList,
+    loading: champsLoading,
+    error: champsError,
+  } = useGetChamps(endpoints?.champList);
+
+  const { modal, showModal, closeModal } = useModal();
+  const { loading, setTeamLoading, stopLoading } = useLoading();
+  const { search, setQuery, resetSearch } = useSearch();
+  const {
+    blueTeam,
+    redTeam,
+    setBlueChamp,
     setRedChamp,
     rmBlueChamp,
-    rmRedChamp
-  } = UseTeamsLogic();
+    rmRedChamp,
+  } = useTeamsLogic();
 
-  function addTeamChamp(team, champ){
-    setStopLoading();
-
-    switch (team) {
-      case TeamTypes.blue:
-        setBlueChamp(champ);
-        return;
-      case TeamTypes.red:
-        setRedChamp(champ)
-        return;
-    }
-  } 
+  const addChamp = useAddChamp({
+    blueTeam,
+    redTeam,
+    setBlueChamp,
+    setRedChamp,
+    endpoints,
+    showModal,
+    setTeamLoading,
+    stopLoading,
+    resetSearch,
+  });
 
   const blueChampList = React.useMemo(
     () => findChamps(search.queryBlue, champsInitList),
@@ -183,82 +58,86 @@ function App() {
 
   return (
     <>
-    <button 
-      className='info'
-      onClick={()=> setShowModal(
-        <>
-          <h1>LoL Team Champs view</h1>
-          <span><i>por Sergio Palacios</i></span>
-          <p>
-            Organiza y Crea equipos con Campeones de <b>League of Legends</b> con el fin de visualizar sus habilidades de forma más comoda y rapida.
-          </p>
-        </>
-      )}
-    >?</button>
+      <button
+        className="info"
+        onClick={() =>
+          showModal(
+            <>
+              <h1>LoL Team Champs view</h1>
+              <span>
+                <i>por Sergio Palacios</i>
+              </span>
+              <p>
+                Organiza y Crea equipos con Campeones de{" "}
+                <b>League of Legends</b> con el fin de visualizar sus
+                habilidades de forma mas comoda y rapida.
+              </p>
+            </>
+          )
+        }
+      >
+        ?
+      </button>
 
-    <main className='teams-panel'>
-      <section className='blue-team'>
-        <LolSearch
-          query={search.queryBlue} 
+      <main className="teams-panel">
+        <TeamPanel
+          team={TEAM_TYPES.blue}
+          className="blue-team"
           teamName="Equipo Azul"
+          query={search.queryBlue}
           champList={blueChampList}
-          OnSetQuery={setQueryBlueSearch}
-          OnAddChamp={(champ)=>{
-            setChampTeamSearch(
-              champ, TeamTypes.blue
-            );
-          }}
+          champs={blueTeam}
+          loading={loading[TEAM_TYPES.blue]}
+          champImg={endpoints?.champImg}
+          onSetQuery={(value) => setQuery(TEAM_TYPES.blue, value)}
+          onAddChamp={addChamp}
+          onRemove={rmBlueChamp}
         />
 
-        <LolChampList>
-          {blueTeam.map(
-            (champ, index) => 
-              <LolChampItem 
-                key={index} 
-                id={champ.id} 
-                champ={champ}
-                champImg={endpoints?.champImg}
-                OnRemove={(id)=> rmBlueChamp(id)}
-              />
-          )}
-          {loading.blue && <LolChampItemLoad />}
-        </LolChampList>
-      </section>
-            
-      <section className='red-team'>
-        <LolSearch
-          query={search.queryRed} 
+        <TeamPanel
+          team={TEAM_TYPES.red}
+          className="red-team"
           teamName="Equipo Rojo"
+          query={search.queryRed}
           champList={redChampList}
-          OnSetQuery={setQueryRedSearch}
-          OnAddChamp={(champ)=>{
-            setChampTeamSearch(
-              champ, TeamTypes.red
-            );
-          }}
+          champs={redTeam}
+          loading={loading[TEAM_TYPES.red]}
+          champImg={endpoints?.champImg}
+          onSetQuery={(value) => setQuery(TEAM_TYPES.red, value)}
+          onAddChamp={addChamp}
+          onRemove={rmRedChamp}
         />
-
-        <LolChampList>
-          {redTeam.map(
-            (champ, index) => 
-              <LolChampItem 
-                key={index} 
-                id={champ.id} 
-                champ={champ}
-                champImg={endpoints?.champImg}
-                OnRemove={(id)=> rmRedChamp(id)}
-              />
-          )}
-          {loading.red && <LolChampItemLoad />}
-        </LolChampList>
-      </section>
       </main>
 
-      {modal.visible && <Modal onClose={()=> setModal(false)}>
+      {(champsLoading || champsError) && (
+        <div
+          role="status"
+          style={{
+            position: "fixed",
+            bottom: 10,
+            left: "50%",
+            transform: "translateX(-50%)",
+            background: "rgba(0, 0, 0, 0.65)",
+            color: "#fff",
+            padding: "8px 14px",
+            borderRadius: 8,
+            fontSize: 13,
+            zIndex: 10,
+          }}
+        >
+          {champsError
+            ? "No se pudieron cargar los campeones."
+            : "Cargando campeones..."}
+        </div>
+      )}
+
+      {modal.visible && (
+        <Modal onClose={closeModal}>
           <div>{modal.message}</div>
-      </Modal>}
+        </Modal>
+      )}
     </>
-  )
+  );
 }
 
-export default App
+export default App;
