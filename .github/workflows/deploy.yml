@@ -19,26 +19,24 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name:  Checkout code
+      - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-
-      - name: Enable pnpm
-        run: corepack enable
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 11
+          version: 11 # ✅ Setup pnpm before Node.js
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22' # ✅ Fixed: Node 22+ satisfies pnpm v11 requirements
+          cache: 'pnpm'       # ✅ Added: Caches pnpm dependencies to speed up builds
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name:  Build project
+      - name: Build project
         run: pnpm run build
 
       - name: Setup Pages
@@ -53,7 +51,7 @@ jobs:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     needs: build
     environment:
-      name:  github-pages
+      name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps: 
