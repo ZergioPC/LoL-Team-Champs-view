@@ -24,6 +24,11 @@
   transform: translateY(0);
 }
 
+.search-bar-wrapper.keep-visible {
+  background: rgba(0, 0, 0, 0.85);
+  transform: translateY(0);
+}
+
 .search-bar-wrapper .LolSearch {
   flex: 1 1 0;
   max-width: 420px;

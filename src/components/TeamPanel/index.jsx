@@ -2,7 +2,7 @@ import { LolChampList } from "../LolChampList";
 import { LolChampItem } from "../LolChampItem";
 import { LolChampItemLoad } from "../LolChampItemLoad";
 
-const TeamPanel = ({ className, champs, loading, champImg, onRemove }) => (
+const TeamPanel = ({ className, champs, loading, champImg, onRemove, showSpells = true }) => (
   <section className={className}>
     <LolChampList>
       {champs.map((champ) => (
@@ -11,6 +11,7 @@ const TeamPanel = ({ className, champs, loading, champImg, onRemove }) => (
           champ={champ}
           champImg={champImg}
           OnRemove={() => onRemove(champ.id)}
+          showSpells={showSpells}
         />
       ))}
       {loading && <LolChampItemLoad />}

@@ -4,6 +4,7 @@ import "./App.css";
 import { Modal } from "./components/Modal";
 import { TeamPanel } from "./components/TeamPanel";
 import { LolSearch } from "./components/LolSearch";
+import { SettingsModal } from "./components/SettingsModal";
 
 import useApiEndpoints from "./hooks/useApiEndpoints";
 import useGetChamps from "./hooks/useGetChamps";
@@ -12,6 +13,7 @@ import useModal from "./hooks/useModal";
 import useLoading from "./hooks/useLoading";
 import useSearch from "./hooks/useSearch";
 import useAddChamp from "./hooks/useAddChamp";
+import useSettings from "./hooks/useSettings";
 
 import findChamps from "./utils/findChamps";
 import { TEAM_TYPES } from "./constants";
@@ -39,6 +41,8 @@ function App() {
   } = useGetChamps(endpoints?.champList);
 
   const { modal, showModal, closeModal } = useModal();
+  const { settings, setSettings } = useSettings();
+  const [settingsOpen, setSettingsOpen] = React.useState(false);
   const { loading, setTeamLoading, stopLoading } = useLoading();
   const { search, setQuery, resetSearch } = useSearch();
   const {
@@ -73,7 +77,12 @@ function App() {
 
   return (
     <>
-    <header className="search-bar-wrapper" onKeyDown={handleSearchTab}>
+    <header
+      className={`search-bar-wrapper${
+        settings.keepHeaderVisible ? " keep-visible" : ""
+      }`}
+      onKeyDown={handleSearchTab}
+    >
       <div className="search-bar-container">
         <LolSearch
           query={search.queryBlue}
@@ -83,6 +92,15 @@ function App() {
           OnSetQuery={(value) => setQuery(TEAM_TYPES.blue, value)}
           OnAddChamp={(id) => addChamp(TEAM_TYPES.blue, id)}
         />
+
+        <button
+          className="info"
+          tabIndex={-1}
+          aria-label="Ajustes"
+          onClick={() => setSettingsOpen(true)}
+        >
+          ⚙️
+        </button>
 
         <button
           className="info"
@@ -128,6 +146,7 @@ function App() {
         loading={loading[TEAM_TYPES.blue]}
         champImg={endpoints?.champImg}
         onRemove={rmBlueChamp}
+        showSpells={settings.showSpells}
       />
 
       <TeamPanel
@@ -137,6 +156,7 @@ function App() {
         loading={loading[TEAM_TYPES.red]}
         champImg={endpoints?.champImg}
         onRemove={rmRedChamp}
+        showSpells={settings.showSpells}
       />
     </main>
 
@@ -166,6 +186,14 @@ function App() {
       <Modal onClose={closeModal}>
         <div>{modal.message}</div>
       </Modal>
+    )}
+
+    {settingsOpen && (
+      <SettingsModal
+        settings={settings}
+        onChange={setSettings}
+        onClose={() => setSettingsOpen(false)}
+      />
     )}
     </>
   );

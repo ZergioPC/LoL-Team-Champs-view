@@ -2,7 +2,7 @@ import "./LolChampItem.css"
 
 const SPELL_KEYS = ["Q", "W", "E", "R"];
 
-const LolChampItem = ({ champ, champImg, OnRemove })=>{
+const LolChampItem = ({ champ, champImg, OnRemove, showSpells = true })=>{
   return(
     <article className="LolChampItem">
       <button 
@@ -15,16 +15,18 @@ const LolChampItem = ({ champ, champImg, OnRemove })=>{
         <img src={champImg + champ.image.full} alt={"Foto de " + champ.id} />
       </figure>
 
-      <ol>
-        {champ.spells.map((spell,index) => (
-          <li 
-            key={spell.id}
-          > 
-            <span>{SPELL_KEYS[index]}</span>
-            <p>{spell.name}</p>
-          </li>
-        ))}
-      </ol>
+      {showSpells && (
+        <ol>
+          {champ.spells.map((spell,index) => (
+            <li 
+              key={spell.id}
+            > 
+              <span>{SPELL_KEYS[index]}</span>
+              <p>{spell.name}</p>
+            </li>
+          ))}
+        </ol>
+      )}
     </article>
   );
 }
