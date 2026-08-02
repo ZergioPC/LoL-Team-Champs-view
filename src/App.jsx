@@ -3,6 +3,7 @@ import "./App.css";
 
 import { Modal } from "./components/Modal";
 import { TeamPanel } from "./components/TeamPanel";
+import { LolSearch } from "./components/LolSearch";
 
 import useApiEndpoints from "./hooks/useApiEndpoints";
 import useGetChamps from "./hooks/useGetChamps";
@@ -58,84 +59,97 @@ function App() {
 
   return (
     <>
-      <button
-        className="info"
-        onClick={() =>
-          showModal(
-            <>
-              <h1>LoL Team Champs view</h1>
-              <span>
-                <i>por Sergio Palacios</i>
-              </span>
-              <p>
-                Organiza y Crea equipos con Campeones de{" "}
-                <b>League of Legends</b> con el fin de visualizar sus
-                habilidades de forma mas comoda y rapida.
-              </p>
-            </>
-          )
-        }
-      >
-        ?
-      </button>
-
-      <main className="teams-panel">
-        <TeamPanel
-          team={TEAM_TYPES.blue}
-          className="blue-team"
-          teamName="Equipo Azul"
+    <header className="search-bar-wrapper">
+      <div className="search-bar-container">
+        <LolSearch
           query={search.queryBlue}
+          teamName="Equipo Azul"
           champList={blueChampList}
-          champs={blueTeam}
-          loading={loading[TEAM_TYPES.blue]}
-          champImg={endpoints?.champImg}
-          onSetQuery={(value) => setQuery(TEAM_TYPES.blue, value)}
-          onAddChamp={addChamp}
-          onRemove={rmBlueChamp}
+          OnSetQuery={(value) => setQuery(TEAM_TYPES.blue, value)}
+          OnAddChamp={(id) => addChamp(TEAM_TYPES.blue, id)}
         />
 
-        <TeamPanel
-          team={TEAM_TYPES.red}
-          className="red-team"
-          teamName="Equipo Rojo"
-          query={search.queryRed}
-          champList={redChampList}
-          champs={redTeam}
-          loading={loading[TEAM_TYPES.red]}
-          champImg={endpoints?.champImg}
-          onSetQuery={(value) => setQuery(TEAM_TYPES.red, value)}
-          onAddChamp={addChamp}
-          onRemove={rmRedChamp}
-        />
-      </main>
-
-      {(champsLoading || champsError) && (
-        <div
-          role="status"
-          style={{
-            position: "fixed",
-            bottom: 10,
-            left: "50%",
-            transform: "translateX(-50%)",
-            background: "rgba(0, 0, 0, 0.65)",
-            color: "#fff",
-            padding: "8px 14px",
-            borderRadius: 8,
-            fontSize: 13,
-            zIndex: 10,
-          }}
+        <button
+          className="info"
+          onClick={() =>
+            showModal(
+              <>
+                <h1>LoL Team Champs view</h1>
+                <span>
+                  <i>por Sergio Palacios</i>
+                </span>
+                <p>
+                  Organiza y Crea equipos con Campeones de{" "}
+                  <b>League of Legends</b> con el fin de visualizar sus
+                  habilidades de forma mas comoda y rapida.
+                </p>
+              </>
+            )
+          }
         >
-          {champsError
-            ? "No se pudieron cargar los campeones."
-            : "Cargando campeones..."}
-        </div>
-      )}
+          ?
+        </button>
 
-      {modal.visible && (
-        <Modal onClose={closeModal}>
-          <div>{modal.message}</div>
-        </Modal>
-      )}
+        <LolSearch
+          query={search.queryRed}
+          teamName="Equipo Rojo"
+          champList={redChampList}
+          OnSetQuery={(value) => setQuery(TEAM_TYPES.red, value)}
+          OnAddChamp={(id) => addChamp(TEAM_TYPES.red, id)}
+        />
+      </div>
+      <div className="search-bar-control">
+        <div></div>
+      </div>
+    </header>
+
+    <main className="teams-panel">
+      <TeamPanel
+        team={TEAM_TYPES.blue}
+        className="blue-team"
+        champs={blueTeam}
+        loading={loading[TEAM_TYPES.blue]}
+        champImg={endpoints?.champImg}
+        onRemove={rmBlueChamp}
+      />
+
+      <TeamPanel
+        team={TEAM_TYPES.red}
+        className="red-team"
+        champs={redTeam}
+        loading={loading[TEAM_TYPES.red]}
+        champImg={endpoints?.champImg}
+        onRemove={rmRedChamp}
+      />
+    </main>
+
+    {(champsLoading || champsError) && (
+      <div
+        role="status"
+        style={{
+          position: "fixed",
+          bottom: 10,
+          left: "50%",
+          transform: "translateX(-50%)",
+          background: "rgba(0, 0, 0, 0.65)",
+          color: "#fff",
+          padding: "8px 14px",
+          borderRadius: 8,
+          fontSize: 13,
+          zIndex: 10,
+        }}
+      >
+        {champsError
+          ? "No se pudieron cargar los campeones."
+          : "Cargando campeones..."}
+      </div>
+    )}
+
+    {modal.visible && (
+      <Modal onClose={closeModal}>
+        <div>{modal.message}</div>
+      </Modal>
+    )}
     </>
   );
 }

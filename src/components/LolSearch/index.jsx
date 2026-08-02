@@ -2,7 +2,7 @@ import './LolSearch.css'
 
 const LolSearch = ({ query, teamName, champList, OnSetQuery, OnAddChamp })=>{  
   return(
-    <header className="LolSearch">
+    <div className="LolSearch">
       <h2>{teamName}</h2>
       <div className="LolSearch-input">
         <input
@@ -23,7 +23,7 @@ const LolSearch = ({ query, teamName, champList, OnSetQuery, OnAddChamp })=>{
           ))}
         </ul>}
       </div>
-    </header>
+    </div>
   );
 }
 

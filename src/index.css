@@ -1,5 +1,5 @@
 :root {
-  --panel-size : calc(99vh - 40px);
+  --panel-size : calc(100vh - 20px);
   --color-red-bg: #d37979c2; 
   --color-blue-bg: #7982d3c2; 
 }

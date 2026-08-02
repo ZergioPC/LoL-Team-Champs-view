@@ -1,3 +1,59 @@
+/* MARK: Search Bar */
+
+.search-bar-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 5;
+  box-sizing: border-box;
+  padding: 16px;
+  padding-bottom: 6px;
+  background: rgba(0, 0, 0, 0);
+  transform: translateY(calc(-100% + 20px));
+  transition: transform 0.35s ease;
+}
+
+.search-bar-wrapper:hover {
+  background: rgba(0, 0, 0, 0.85);
+  transform: translateY(0);
+}
+
+.search-bar-wrapper .LolSearch {
+  flex: 1 1 0;
+  max-width: 420px;
+  justify-content: center;
+}
+
+.search-bar-wrapper .LolSearch > h2 {
+  color: #fff;
+  text-shadow: 1px 1px 2px #000;
+}
+
+.search-bar-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+
+.search-bar-control {
+  margin-top: 10px;
+}
+
+.search-bar-control div{
+  background-color: #fff;
+  width: 200px;
+  height: 5px;
+  border-radius: 5px;
+  margin: 0 auto;
+  box-shadow: 0px 2px 6px #000;
+}
+
+
+/* MARK: Teams Panels */
+
+
 .teams-panel {
   display: flex;
   flex-direction: row;
@@ -20,19 +76,17 @@
 }
 
 .info {
-  position: absolute;
-  top: 5px;
-  left: calc(50% - 20px);
+  flex-shrink: 0;
   aspect-ratio: 1/1;
-  width: 40px;
+  width: 34px;
   border-radius: 50%;
 
   cursor: pointer;
   border: none;
   background: rgba(255, 255, 255, 0.418);
   color: #000000;
-  font-size: 22px;
-  transition: 
+  font-size: 18px;
+  transition:
     background 0.25s ease,
     color 0.25s ease,
     transform 0.15s ease,
@@ -51,6 +105,17 @@
 }
 
 @media screen and (max-width: 900px) {
+  .search-bar-wrapper {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .search-bar-wrapper .LolSearch {
+    max-width: none;
+    width: 100%;
+    justify-content: space-between;
+  }
+
   .teams-panel {
     flex-direction: column;
   }
