@@ -39,6 +39,8 @@
   color: #cacaca;
   background-color: #00000062;
   border-radius: 0px 0px 5px 5px;
+  max-height: 260px;
+  overflow-y: auto;
 }
 
 .LolSearch-results button {
@@ -46,4 +48,9 @@
   width: 100%;
   font-size: 14px;
   border-radius: 5px;
+}
+
+.LolSearch-results li.active > button {
+  background-color: rgba(0, 123, 255, 0.45);
+  color: #fff;
 }

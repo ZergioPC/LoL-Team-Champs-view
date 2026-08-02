@@ -17,6 +17,20 @@ import findChamps from "./utils/findChamps";
 import { TEAM_TYPES } from "./constants";
 
 function App() {
+  const blueInputRef = React.useRef(null);
+  const redInputRef = React.useRef(null);
+
+  const handleSearchTab = (e) => {
+    if (e.key !== "Tab") return;
+    const inBlue = e.target === blueInputRef.current;
+    const inRed = e.target === redInputRef.current;
+    if (!inBlue && !inRed) return;
+
+    e.preventDefault();
+    const next = inBlue ? redInputRef.current : blueInputRef.current;
+    next?.focus();
+  };
+
   const endpoints = useApiEndpoints();
   const {
     champs: champsInitList,
@@ -59,18 +73,20 @@ function App() {
 
   return (
     <>
-    <header className="search-bar-wrapper">
+    <header className="search-bar-wrapper" onKeyDown={handleSearchTab}>
       <div className="search-bar-container">
         <LolSearch
           query={search.queryBlue}
           teamName="Equipo Azul"
           champList={blueChampList}
+          inputRef={blueInputRef}
           OnSetQuery={(value) => setQuery(TEAM_TYPES.blue, value)}
           OnAddChamp={(id) => addChamp(TEAM_TYPES.blue, id)}
         />
 
         <button
           className="info"
+          tabIndex={-1}
           onClick={() =>
             showModal(
               <>
@@ -94,6 +110,7 @@ function App() {
           query={search.queryRed}
           teamName="Equipo Rojo"
           champList={redChampList}
+          inputRef={redInputRef}
           OnSetQuery={(value) => setQuery(TEAM_TYPES.red, value)}
           OnAddChamp={(id) => addChamp(TEAM_TYPES.red, id)}
         />
