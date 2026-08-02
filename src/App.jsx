@@ -66,13 +66,21 @@ function App() {
     resetSearch,
   });
 
+  const jadeChampList = React.useMemo(() => {
+    if (!champsInitList) return null;
+    return champsInitList.filter((champ) => {
+      const isJade = champ.id.startsWith("Jade_");
+      return settings.jadeOnly ? isJade : !isJade;
+    });
+  }, [champsInitList, settings.jadeOnly]);
+
   const blueChampList = React.useMemo(
-    () => findChamps(search.queryBlue, champsInitList),
-    [search.queryBlue, champsInitList]
+    () => findChamps(search.queryBlue, jadeChampList),
+    [search.queryBlue, jadeChampList]
   );
   const redChampList = React.useMemo(
-    () => findChamps(search.queryRed, champsInitList),
-    [search.queryRed, champsInitList]
+    () => findChamps(search.queryRed, jadeChampList),
+    [search.queryRed, jadeChampList]
   );
 
   return (

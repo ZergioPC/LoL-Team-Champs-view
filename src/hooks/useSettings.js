@@ -5,6 +5,7 @@ const STORAGE_KEY = "lol-champ-settings";
 export const DEFAULT_SETTINGS = {
   keepHeaderVisible: false,
   showSpells: true,
+  jadeOnly: false,
 };
 
 function loadSettings() {

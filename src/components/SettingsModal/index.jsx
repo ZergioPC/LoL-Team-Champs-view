@@ -35,6 +35,18 @@ const SettingsModal = ({ settings, onChange, onClose }) => {
             onChange={() => toggle("showSpells")}
           />
         </label>
+
+        <label className="SettingsModal-option">
+          <div>
+            <h3>Modo Lol CLasic</h3>
+            <p>Activado muestra únicamente campeones del Clasic. Desactivado los oculta.</p>
+          </div>
+          <input
+            type="checkbox"
+            checked={settings.jadeOnly}
+            onChange={() => toggle("jadeOnly")}
+          />
+        </label>
       </div>
     </Modal>
   );
