@@ -21,9 +21,9 @@ Hace uso de la API pública de _*Riot Games*_ [Data Dragon](https://developer.ri
 1.  Clonar el repositorio.
 2.  Instalar dependencias:
     ```bash
-    npm install
+    pnpm install
     ```
 3.  Iniciar dev server:
     ```bash
-    npm run dev
+    pnpm run dev
     ```
