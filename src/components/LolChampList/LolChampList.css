@@ -1,7 +1,15 @@
+.LolChampListWrap {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  min-height: 0;
+}
+
 .LolChampList {
   display: flex;
-  margin-top: 5px;
-  height: calc(var(--panel-size) - 40px);
+  flex: 1 1 0;
   flex-direction: column;
   gap: 10px;
+  margin-top: 5px;
+  min-height: 0;
 }

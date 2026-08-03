@@ -2,7 +2,7 @@ import './LolChampList.css'
 
 const LolChampList = ({children})=>{
   return(
-    <main>
+    <main className="LolChampListWrap">
       <ul className="LolChampList">
         {children}
       </ul>

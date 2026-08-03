@@ -2,8 +2,9 @@
   position: relative;
   display: grid;
   box-sizing: border-box;
+  flex: 1 1 0;
+  min-height: 0;
   padding: 5px;
-  height: calc((var(--panel-size) - 80px)/5);
   grid-template-rows: 1fr 2fr;
   grid-template-columns: 1fr 4fr;
   background-color: rgba(0, 0, 0, 0.322);
