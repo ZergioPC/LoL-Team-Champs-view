@@ -34,7 +34,7 @@ const LolSearch = ({ query, teamName, champList, OnSetQuery, OnAddChamp, inputRe
       if (showResults) {
         e.preventDefault();
         setActiveIndex((i) => {
-          const prev = (i - 1 + champList.length) % champList.length;
+          const prev = (i + champList.length) % champList.length;
           scrollActiveIntoView(prev);
           return prev;
         });
